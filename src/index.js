@@ -25,7 +25,24 @@ function checksExistsUserAccount(request, response, next) {
 }
 
 function checksCreateTodosUserAvailability(request, response, next) {
-  // Complete aqui
+  
+  const { user } = request;
+
+  const isProPlan = user.pro;
+  const maxTodos = 10;
+  const checkQuantityTodos = user.todos.length;
+  
+  if (isProPlan === false && checkQuantityTodos < maxTodos || isProPlan === true) {
+    return next();
+  }
+
+  if(isProPlan === true) {
+    return next();
+  }
+  
+  if(isProPlan === false && checkQuantityTodos === maxTodos) {
+    return response.status(403).json({error: "Hire the Pro Plan Bro!"});
+  }
 }
 
 function checksTodoExists(request, response, next) {
