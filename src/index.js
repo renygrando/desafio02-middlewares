@@ -55,23 +55,22 @@ function checksTodoExists(request, response, next) {
     return response.status(404).json({ error: "user not found"})
   }
 
-  const checkId = validate(id);
+  const checkIfIdIsUuid = validate(id);
 
-  if(!checkId){
-    return response.status(400).json({error: "This ID is not valid"})
+  if(checkIfIdIsUuid == false) {
+    return response.status(400).json({error: "Id is not valid"})
   }
 
-  const todo = users.find(user => user.todos.id === id);
+  const todo = user.todos.find(todos => todos.id === id);
 
   if(!todo){
     return response.status(404).json({ error: "Todo not found"})
   }
+  
+  request.user = user;
+  request.todo = todo;
+  return next();
 
-  if(user && todo && checkId){
-    request.user = user;
-    request.todos = todo;
-    return next();
-  }
 }
 
 function findUserById(request, response, next) {
