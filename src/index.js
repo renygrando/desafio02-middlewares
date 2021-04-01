@@ -46,11 +46,45 @@ function checksCreateTodosUserAvailability(request, response, next) {
 }
 
 function checksTodoExists(request, response, next) {
-  // Complete aqui
+  const {username} = request.headers;
+  const {id} = request.params;
+
+  const user = users.find(user => user.username === username);
+
+  if(!user){
+    return response.status(404).json({ error: "user not found"})
+  }
+
+  const checkId = validate(id);
+
+  if(!checkId){
+    return response.status(400).json({error: "This ID is not valid"})
+  }
+
+  const todo = users.find(user => user.todos.id === id);
+
+  if(!todo){
+    return response.status(404).json({ error: "Todo not found"})
+  }
+
+  if(user && todo && checkId){
+    request.user = user;
+    request.todos = todo;
+    return next();
+  }
 }
 
 function findUserById(request, response, next) {
-  // Complete aqui
+  const { id } = request.params;
+  const user = users.find(user => user.id === id);
+  
+  if(user){
+    request.user = user;
+    return next();
+  } else {
+    response.status(404).json({error: "user not found"})
+  }
+
 }
 
 app.post('/users', (request, response) => {
